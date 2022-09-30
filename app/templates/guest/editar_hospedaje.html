@@ -1,0 +1,256 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+     <div class="card-body border mt-2 my-4">
+          <form class="form" id="formr_and_h" method="post">
+          {% csrf_token %}
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                         <input type="hidden" value="{{clients.id}}" name="cliente" id="cliente"  >
+                         <input type="hidden" value="{{user.id}}"  name="recepcionista" id="recepcionista" > 
+
+                         <div><label for="title" class="d-flex justify-content-center" >Nombres</label></div>
+                         <input type="text" value="{{entry.client.name}}" name="name" id="name" class="form-control"  readonly  >             
+
+                    </div>
+                    <div class="col-md-auto">
+                         <div><label for="title" class="d-flex justify-content-center">Apellidos</label></div>
+                         <input type="text" value="{{entry.client.last_name}}" name="last_name" id="last_name" class="form-control"  readonly  >     
+                    </div>
+                    <div class="col-md-auto">
+                         <div><label for="title" class="d-flex justify-content-center">Numero de Documento</label></div>
+                         <input type="text"  value="{{entry.client.document_number}}" name="document_number" id="document_number" class="form-control"  readonly >
+                         
+                    </div>
+                    <div class="col-md-auto">
+                         
+                         <div><label for="title" class="d-flex justify-content-center" >Empresa</label></div>
+                         <input type="text" value="{{entry.client.company}}" name="last_name" id="last_name" class="form-control"  readonly > 
+                    </div>
+               </div>
+               <hr>
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                        <br> 
+                         <label for="title" class="d-flex justify-content-center">Tipo de Ingreso</label>
+                         <input type="text" value="{{entry.type_entry}}" name="tipoingreso" id="last_name" class="form-control"  readonly >         
+                         
+                    </div>
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title" class="d-flex justify-content-center">Estado de Pago</label>
+                         <select type="" name="tiporeservacion" id="tiporeservacion" class="form-select">                                                           
+                              <option value="{{entry.type_reservation}}">{{entry.type_reservation}}</option>
+                              <option value="Cancelada">Cancelada</option>                         
+                              <option value="No cancelada">No Cancelada</option>                                      
+                         </select>
+                    </div>
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title" class="d-flex justify-content-center">Habitacion:</label>
+                              <select name="habitacion" id="habitacion"  class="form-select" onChange="(calculo_habitacion(this))" required>
+                                   <option value="{{entry.room_id}},{{entry.room.room_price}}">{{entry.room.room_number}}-{{entry.room.room_type}}</option>  
+                                   {% for rooms in room%}
+                                        <option value="{{rooms.id}},{{rooms.room_price}}">{{rooms.room_number}}-{{rooms.room_type}}</option>
+                                   {% endfor%}
+                              </select>   
+    
+                    </div>                    
+               </div>
+               <hr>
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto my-2">
+                         
+                         <div class="form-check my-3 d-flex justify-content-center">
+                              {% if entry_extrapack.extra.name == 'Pack Adicional' and entry_extrapack.quantity >= 1  %}   
+                                   <input class="form-check-input" type="checkbox"  id="check" value="1" checked="checked"  name="extra_adicional" onChange="comprobar(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                        -Pack Adicional
+                                   </label> 
+                              {% else %}
+                                   <input class="form-check-input" type="checkbox"  id="check"  value="1"  name="extra_adicional" onChange="comprobar(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                        -Pack Adicional
+                                   </label> 
+                              {% endif %}                        
+                              
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                   <label for="title" id="cantidad" style="display:none">Cantidad</label>                   
+                              </div>
+                              <input type="text" value="{{entry_extrapack.quantity}}" name="cantidad_adicional" id="cantidad_adicional" class="form-control" style="display:none" onChange="calculo_cant_adicional(this)">                       
+                              <input type="hidden" id="precio_cantidad_adicional" value="{{extra_adic}}">     
+                         </div>
+
+
+                    <div class="col-md-auto my-2">
+
+                         <div class="form-check my-3 d-flex justify-content-center ">
+                              {% if entry_extrain.extra.name == 'Early Check in' and entry_extrain.quantity >= 1  %}   
+                                   <input class="form-check-input" type="checkbox"  id="check" value="2" checked="checked" name="extra_in" onChange="comprobarin(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                   -Early Check in
+                                   </label>
+                              {% else %}
+                                   <input class="form-check-input" type="checkbox"  id="check" value="2"  name="extra_in" onChange="comprobarin(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                   -Early Check in
+                                   </label>
+                              {% endif %}
+
+                         </div>                       
+                          <div class="d-flex justify-content-center">
+                              <label for="title" id="cantidadin" style="display:none">Cantidad</label>                   
+                          </div>
+                          <input type="text" value="{{entry_extrain.quantity}}" name="cantidad_in" id="cantidad_in" class="form-control" style="display:none"  onChange="calculo_cant_extrain()">
+                          <input type="hidden" id="extra_check_in" value="{{extra_check_in}}"> 
+                    </div>                    
+                    
+                    <div class="col-md-auto my-2">
+                         <div class="form-check my-3 d-flex justify-content-center">
+                              {% if entry_extraout.extra.name == 'Early Check out' and entry_extraout.quantity >= 1  %}
+                                   <input class="form-check-input" type="checkbox"  id="check" value="3" checked="checked"  name="extra_out" onChange="comprobarout(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                      -Early Check out
+                                   </label>
+                              {% else %} 
+                                   <input class="form-check-input" type="checkbox"  id="check" value="3"   name="extra_out" onChange="comprobarout(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                      -Early Check out
+                                   </label> 
+                              {% endif %}                      
+                         </div> 
+                         <div class="d-flex justify-content-center">
+                              <label for="title" id="cantidadout" style="display:none">Cantidad</label>                   
+                         </div>
+                         <input type="text" value="{{entry_extraout.quantity}}" name="cantidad_out" id="cantidad_out" class="form-control" style="display:none" onChange="calculo_cant_extraout()">                       
+                         <input type="hidden" id="extra_check_out" value="{{extra_check_out}}">                 
+
+                    </div>
+
+               </div>
+               <hr>
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title">Fecha de entrada</label>
+                              <input type="date" value="{{entry.entry_at|date:'Y-m-d'}}" name="fechaentrada" id="fechaentrada" onChange="calculo_total()" class="form-control" required>   
+                    </div>
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title">Fecha de salida</label>
+                              <input type="date" value="{{entry.exit_at|date:'Y-m-d'}}"  name="fechasalida" id="fechasalida" onChange="calculo_total()" class="form-control" required>
+                    </div>                  
+
+               </div>
+               <div class="col-md-auto">
+                    <br>
+                    <label for="title">Observacion</label>
+                   
+                         <textarea name="observacion"  id="observacion" cols="10" rows="5" class="form-control">{{entry.observation}}</textarea>
+                         
+               </div>
+               <div class="grid">
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Tipo de pago</label>
+                              <select type="" name="tipopago" id="" class="form-select" required >
+                                   <option value="{{entry.payment_type}}">{{entry.payment_type}}</option>                         
+                                                       
+                                   <option value="Efectivo">1-Efectivo</option>                         
+                                   <option value="Transferencia">2-Transferencia</option>                         
+                                   <option value="Debito">3-Debito</option>
+                                   <option value="credito">4-Tarjeta de Credito</option>                         
+                                   <option value="Zelle">5-Zelle</option>                         
+                                   <option value="Binance">6-Binace</option>                         
+                              </select>
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Dinero Recibido</label>
+                                   <input type="text" value="{{entry.received}}" name="dinerorecibido" id="dinerorecibido" onChange="deuda_cliente()" class="form-control" required> 
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Detalles del Pago</label>
+                              <input type="text" value="{{entry.payment_details}}" name="detallepago" id="detallepago" class="form-control" required> 
+                         </div>
+                        
+                    <div class="grid">
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Deuda cliente</label>
+                              <input type="text" value="{{entry.customer_debt}}" name="deudacliente" id="deudacliente" class="form-control" required >  
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Saldo a Favor</label>
+                              <input type="text" value="{{entry.hotel_debt}}" name="deudahotel" id="deudahotel" class="form-control" required> 
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Total a Pagar</label>
+                              <input type="text" value="{{entry.total}}" name="total" id="total" class="form-control"  required>  
+                         </div>
+
+                    </div>
+                    <hr>
+                    <div class="row justify-content-md-center">
+                         <div class="col-md-auto">
+                              <br>
+                              <label for="title">Check Out</label>
+                              <select type="" name="salida" id="" class="form-select" required >
+                                   <option value="{{entry.guest_exit}}">{{entry.guest_exit}}</option>                         
+                                                       
+                                   <option value="Si">Si</option>                         
+                                   <option value="No">No</option>                                                        
+                              </select>
+                              
+                         </div>
+                         <div class="col-md-auto">
+                              <br>
+                           <!--    <a href="#" onclick="actualizarHospedaje({{entry.id}})" title="ELiminar cliente" class="btn btn-secondary "  ></a> -->
+                              <button  type="submit" onclick="actualizarHospedaje({{entry.id}})"  class="btn btn-secondary container my-3 ">Actualizar</button>
+                         </div>
+                         
+                         <div class="col-md-auto">
+                              <br>
+                              
+                         </div>
+                         
+                    </div>
+               </div>
+                
+          </form>
+          
+     </div>
+    
+      <!-- Cargar Archivos de javascript estaticos-->
+      <!-- <script src="{% static 'js/utils/notificacionactu.js' %}" ></script>  -->     
+      <script src="{% static 'js/utils/ocultarcantidad.js' %}"></script> 
+      <script src="{% static 'js/utils/calcularhr.js' %}" ></script>  
+      <script src="{% static 'js/utils/select.js' %}" ></script> 
+      <script src="{% static 'js/utils/validarb.js' %}" ></script>   
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

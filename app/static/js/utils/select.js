@@ -1,0 +1,3 @@
+$(function() {
+    $("#habitacion").select2();
+});

@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}    
+
+<div class=" container  ">        
+        
+    <div class="row">
+        <div class="col-3 mx-auto" style="width: 300px;"">
+                    
+                <form method ="get" action="/Reservaciones/"  class=" d-flex container">                
+                    <input class="form-control me-2" name="buscar" type="date" placeholder="Search" aria-label="Search">
+                    <input class="form-control me-2" name="buscarr" type="date" placeholder="Search" aria-label="Search">                   
+                    <button class="btn btn-outline-secondary" type="submit" >Buscar</button>
+                </form>
+        </div>   
+            
+
+         <main class=" col-12  pb" style="height:610px;">
+            <form class="container" action="/Reservaciones/">
+              
+            </form>
+            <table class="table table-striped border border-3 ">
+                        <thead class="table-dark text-center">
+                            <h2 class="container form-control btn-dark text-center p-2">Reservaciones</h2>
+                            <tr class="">
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Cedula</th>                            
+                                <th>Empresa</th>                            
+                                <th>Fecha Entrar</th>
+                                <th>Fecha Salida</th>
+                                <th>Habitacion</th>
+                                <th>Recepcionista</th>
+                                <th>Editar </th>
+                                <th>Eliminar</th>
+
+                                                
+                            </tr> 
+                        </thead>
+                        <tbody> 
+                                {% for entrys in entry %} 
+                                    <tr>
+                                        
+                                        <td class="table-secondary text-center">{{ entrys.client.name}} </td>
+                                        <td class="table-secondary text-center">{{ entrys.client.last_name}}  </td>
+                                        <td class="table-dark text-center">{{ entrys.client.document_number}}</td>
+                                        <td class="table-dark text-center">{{ entrys.client.company}}</td>
+                                        <td class="table-dark text-center">{{entrys.entry_at}}</td>
+                                        <td class="table-dark text-center">{{entrys.exit_at}}</td>
+                                        <td class="table-dark text-center"><i class='fas fa-door-closed'></i> {{entrys.room_id}}</td>
+                                        <td class="table-dark text-center">{{entrys.receptionist.first_name}} {{entrys.receptionist.last_name}}</td>
+                                        <td class="table-dark text-center"> 
+                                            <a href="{% url 'editarr' entrys.id %}" title="Editar Cliente" class="btn"  style="background-color: #F3E9C8;"> 
+                                                <i class='fas fa-edit'></i>
+                                            </a></td>                                     
+                                        <td class="table-dark text-center"> 
+                                            <a href="#" onclick="eliminarReserva({{entrys.id}})" title="ELiminar cliente" class="btn btn-secondary">
+                                                <i class="fas fa-trash-alt"></i>               
+                                            </a>
+                                        </td>
+                                        
+
+                                    
+                                    </tr>
+                                {% endfor %}   
+                        </tbody>    
+            </table>
+            <script src="{% static 'js/utils/notificacion.js' %}" ></script> 
+            <div> {%  include 'booking/paginator.html' %} </div>    
+        </main>
+    </div>
+    
+    
+</div>
+{% endblock %}

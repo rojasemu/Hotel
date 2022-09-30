@@ -1,0 +1,332 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="card-body">
+    <div class="g-col-2 btn border border-dark rounded" title="Habitaciones Lista para hospedar" style="background-color: #058046;"><i class='fas fa-door-closed '></i><strong>Habilitada {{ roomh}}</strong> </div>
+    <div class="g-col-2 btn border border-dark rounded" title="Falta accesorios para hopsedar" style="background-color: #feffff;"><i class='fas fa-door-closed '></i><strong>Disponible {{ roomd}}</strong> </div>
+    <div class="g-col-2 btn border border-dark rounded" title="Habitación ocupadas por  huespedes" style="background-color: #dc3545;"><i class='fas fa-bed'></i> <strong>Ocupada {{ roomo}}</strong> </div>
+    <div class="g-col-2 btn border border-dark rounded" title="Habitación Reservada para ser Hospedada" style="background-color: #b9ae0e;"><i class='fas fa-calendar-alt'></i><strong>Reservada {{ roomr}}</strong> </div>
+    <div class="g-col-2 btn border border-dark rounded" title="Habitaciones en Limpieza" style="background-color: #858585;"><i class='fas fa-hourglass-half'></i> <strong>En Espera {{ roome}}</strong> </div>
+    <div class="g-col-2 btn border border-dark rounded" title="Habitaciones en Mantenimiento" style="background-color: #fd7e14;"><i class='fas fa-tools'> </i><strong>Averiada {{ rooma}}</strong> </div>
+</div>       
+
+        
+      
+<div class="col-3 mx-auto" style="width: 300px;"">
+                    
+    <form method ="get" action="/habitaciones/"  class=" d-flex container">                
+        <input class="form-control me-2" name="buscar" type="date" placeholder="Search" aria-label="Search">
+        <input class="form-control me-2" name="buscarr" type="date" placeholder="Search" aria-label="Search">                   
+        <button class="btn btn-outline-secondary" type="submit" >Buscar</button>
+    </form>
+</div>         
+
+<!-- <div class="col-3 mx-auto" style="width: 300px;"">
+
+    <form method ="get" class=" d-flex"> 
+        <input class="form-control me-2" name="buscar" type="date" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+    </form>
+</div> -->
+
+<!--<div class="container">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mb-4">
+         
+        {% for rooms in room %}          
+            
+                    {% if rooms.condition == 'Habilitada' %}
+                        
+                            <div class="card-body ">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #058046;"><i class='fas fa-door-closed' style='font-size:22px'></i>
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id}} </strong></a>
+                                        <div>{{rooms.room_type}} </div>
+                                        <div class=" border border-dark  text-center h6" style="background-color: #096145;">Habilitada</div>
+                                    </div>
+                            </div> 
+                    
+                    {% elif rooms.condition == 'Disponible' %}
+                                <div class="card-body">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #feffff;"><i class='fas fa-door-closed ' style='font-size:22px'></i> 
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark " ><strong>{{ rooms.id}}</strong></a>
+                                        <div>{{rooms.room_type}}</div>
+                                        <div class=" border border-dark  text-center h6" style="background-color: #f3f3f3;">Disponible</div>  
+                                    </div>
+                                </div>
+                    
+                    {% elif rooms.condition == 'Ocupada' %}
+                                
+                                <div class="card-body">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #dc3545;"><i class='fas fa-bed' style='font-size:22px'></i>
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a>
+                                        {% for entrys in entry %} 
+                                            {% if  entrys.room_id == rooms.id and entrys.guest_exit == 'No' and entrys.entry_at|date:'Y-m-d' == queryset %}
+                                                <a href="{% url 'Editarhospedaje' entrys.id %}" title="Hospedaje" class="btn btn-outline-dark" ><strong>Deuda:{{entrys.customer_debt}}$</strong> </a> 
+                                                
+                                            {% endif %}
+                                            
+                                        {% endfor %} 
+                                        <div >{{rooms.room_type}}</div>
+                                        <div class=" border border-dark  text-center h6" style="background-color: #b10e23;">Ocupada</div>
+                                    </div>                                   
+                                        
+                                </div>                       
+                                
+                    {% elif rooms.condition == 'Reservada' %}                            
+                                <div class="card-body">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #b9ae0e;"><i class='fas fa-calendar-alt'style='font-size:22px'></i>
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id}}</strong></a>
+                                        {% for entrys in entry %} 
+                                            {% if entrys.room_id == rooms.id  %}
+                                                <a href="{% url 'editarr' entrys.id %}" title="Hospedaje" class="btn btn-outline-dark" ><strong>{{entrys.type_reservation}}</strong></a>  
+                                            {% endif %}
+                                        {% endfor %}
+                                        <div>{{rooms.room_type}}</div>
+                                        <div class=" border border-dark text-center h6" style="background-color: #838b06;">Reservada</div>
+                                    </div>       
+                                </div>
+                                    
+                    {% elif rooms.condition == 'En Espera' %}
+                                <div class="card-body">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #858585;"><i class='fas fa-hourglass-half'style='font-size:22px'></i>
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a>
+                                        <div>{{rooms.room_type}} </div>
+                                        <div class=" border border-dark  text-center h6" style="background-color: #5e5d5d;">En Espera</div>  
+                                    </div>  
+                                </div>
+                    {% else %}
+                                <div class="card-body">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #fd7e14;"><i class='fas fa-tools' style='font-size:22px'></i>
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a> 
+                                        <div>{{rooms.room_type}} </div>
+                                        <div class=" border border-dark  text-center h6" style="background-color: #9e5d08;">Averiada</div>
+                                    </div>
+                                </div>
+                            
+                    {% endif %}   
+                
+
+        {% endfor %} 
+               
+    </div>
+    
+    <div> {%  include 'room/paginator.html' %} </div>       
+    
+
+</div>-->
+
+
+ <div class="container">
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mb-4">
+
+        {% for rooms in room %}
+            <input type="hidden" id="myVar" class="myVar" name="myVar" value="1">
+
+                {% for roomsc in roomc %}
+                    {% if roomsc.room_id == rooms.id %}
+                        <input type="hidden" id="myVar" class="myVar" name="myVar" value="2">
+                        {% if roomsc.condition == 'Habilitada' %}
+                            <div class="card-body ">
+                                        <div class="p-3 border border-dark rounded text-center " style="background-color: #058046;"><i class='fas fa-door-closed' style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id}} </strong></a>
+                                            <div>{{rooms.room_type}} </div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #096145;">Habilitada</div>
+                                        </div>
+                            </div> 
+                        
+                        {% elif roomsc.condition == 'Disponible' %}
+                            <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #feffff;"><i class='fas fa-door-closed ' style='font-size:22px'></i> 
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark " ><strong>{{ rooms.id}}</strong></a>
+                                            <div>{{rooms.room_type}}</div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #f3f3f3;">Disponible</div>  
+                                        </div>
+                            </div>
+                        
+                        {% elif roomsc.condition == 'Ocupada' %} 
+                            <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #dc3545;"><i class='fas fa-bed' style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a>
+                                            {% for entrys in entry %} 
+                                                {% if  entrys.room_id == rooms.id and entrys.guest_exit == 'No' %}
+                                                    <a href="{% url 'Editarhospedaje' entrys.id %}" title="Hospedaje" class="btn btn-outline-dark" ><strong>Deuda:{{entrys.customer_debt}}$</strong> </a> 
+                                                    
+                                                {% endif %}
+                                                
+                                            {% endfor %} 
+                                            <div >{{rooms.room_type}}</div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #b10e23;">Ocupada</div>
+                                        </div>                                        
+                            </div>                       
+                                    
+                        {% elif roomsc.condition == 'Reservada' %}                            
+                            <div class="card-body">
+                                <div class="p-3 border border-dark rounded text-center   " style="background-color: #b9ae0e;"><i class='fas fa-calendar-alt'style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id}}</strong></a>
+                                            {% for entrys in entry %} 
+                                                {% if entrys.room_id == rooms.id  %}
+                                                    <a href="{% url 'editarr' entrys.id %}" title="Hospedaje" class="btn btn-outline-dark" ><strong>{{entrys.type_reservation}}</strong></a>  
+                                                {% endif %}
+                                            {% endfor %}
+                                            <div>{{rooms.room_type}}</div>
+                                            <div class=" border border-dark text-center h6" style="background-color: #838b06;">Reservada</div>
+                                </div>       
+                            </div>
+                                        
+                        {% elif roomsc.condition == 'En Espera' %}
+                            <div class="card-body">
+                                <div class="p-3 border border-dark rounded text-center   " style="background-color: #858585;"><i class='fas fa-hourglass-half'style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a>
+                                            <div>{{rooms.room_type}} </div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #5e5d5d;">En Espera</div>  
+                                </div>  
+                            </div>
+                        {% else %}
+                            <div class="card-body">
+                                <div class="p-3 border border-dark rounded text-center   " style="background-color: #fd7e14;"><i class='fas fa-tools' style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a> 
+                                            <div>{{rooms.room_type}} </div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #9e5d08;">Averiada</div>
+                                </div>
+                            </div> 
+                        {% endif %}   
+                    {% endif %}
+                {% endfor %}
+                    <div id="mydiv">
+                        {% if rooms.condition == 'Habilitada' %}       
+                            <div class="card-body ">
+                                    <div class="p-3 border border-dark rounded text-center   " style="background-color: #058046;"><i class='fas fa-door-closed' style='font-size:22px'></i>
+                                        <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id}} </strong></a>
+                                        <div>{{rooms.room_type}} </div>
+                                        <div class=" border border-dark  text-center h6" style="background-color: #096145;">Habilitada</div>
+                                    </div>
+                            </div> 
+                        {% elif rooms.condition == 'Disponible' %}
+                                    <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #feffff;"><i class='fas fa-door-closed ' style='font-size:22px'></i> 
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark " ><strong>{{ rooms.id}}</strong></a>
+                                            <div>{{rooms.room_type}}</div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #f3f3f3;">Disponible</div>  
+                                        </div>
+                                    </div>
+                        {% elif rooms.condition == 'Ocupada' %}
+                                    
+                                    <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #dc3545;"><i class='fas fa-bed' style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a>
+                                            {% for entrys in entry %} 
+                                                {% if  entrys.room_id == rooms.id and entrys.guest_exit == 'No' and entrys.entry_at|date:'Y-m-d' == queryset %}
+                                                    <a href="{% url 'Editarhospedaje' entrys.id %}" title="Hospedaje" class="btn btn-outline-dark" ><strong>Deuda:{{entrys.customer_debt}}$</strong> </a> 
+                                                    
+                                                {% endif %}
+                                                
+                                            {% endfor %} 
+                                            <div >{{rooms.room_type}}</div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #b10e23;">Ocupada</div>
+                                        </div>                                   
+                                            
+                                    </div>                       
+                        {% elif rooms.condition == 'Reservada' %}                            
+                                    <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #b9ae0e;"><i class='fas fa-calendar-alt'style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id}}</strong></a>
+                                            {% for entrys in entry %} 
+                                                {% if entrys.room_id == rooms.id  %}
+                                                    <a href="{% url 'editarr' entrys.id %}" title="Hospedaje" class="btn btn-outline-dark" ><strong>{{entrys.type_reservation}}</strong></a>  
+                                                {% endif %}
+                                            {% endfor %}
+                                            <div>{{rooms.room_type}}</div>
+                                            <div class=" border border-dark text-center h6" style="background-color: #838b06;">Reservada</div>
+                                        </div>       
+                                    </div> 
+                        {% elif rooms.condition == 'En Espera' %}
+                                    <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #858585;"><i class='fas fa-hourglass-half'style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a>
+                                            <div>{{rooms.room_type}} </div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #5e5d5d;">En Espera</div>  
+                                        </div>  
+                                    </div>
+                        {% else %}
+                                    <div class="card-body">
+                                        <div class="p-3 border border-dark rounded text-center   " style="background-color: #fd7e14;"><i class='fas fa-tools' style='font-size:22px'></i>
+                                            <a href="{% url 'room' rooms.id %}"  title="Habitación" class="btn btn-outline-dark" ><strong>{{ rooms.id }}</strong></a> 
+                                            <div>{{rooms.room_type}} </div>
+                                            <div class=" border border-dark  text-center h6" style="background-color: #9e5d08;">Averiada</div>
+                                        </div>
+                                    </div>  
+                        {% endif %}
+                    </div>  
+        {% endfor %}  
+        
+        <script>
+            /*function check() {
+ 
+                 console.log('hola')
+ 
+               let element = document.getElementById("mydiv");          
+ 
+               element.setAttribute("hidden", "hidden");
+             }*/
+ /*
+             const selectElement = document.querySelector('.myVar');
+ 
+             selectElement.addEventListener('change', (event) => {
+                 let element = document.getElementById("mydiv");          
+                 element.setAttribute("hidden", "hidden");
+ 
+                 console.log('hola')
+             });
+ */
+           /* $("#myVar").on("change",function(){
+                 let element = document.getElementById("mydiv");          
+                 element.setAttribute("hidden", "hidden");
+ 
+                 console.log('hola')
+               });*/
+ 
+               /*$(document).on("change","#myVar",function(){
+                 let element = document.getElementById("mydiv");          
+                 element.setAttribute("hidden", "hidden");
+ 
+                 console.log('hola')
+              });*/
+ 
+              $(document).ready(function() {
+   
+       
+                 $("input[type='hidden']").bind("change", function() {
+                     let element = document.getElementById("mydiv");          
+                     element.setAttribute("hidden", "hidden");
+ 
+                 console.log('hola')
+                 });
+             })
+             /*$(document).ready(function() {
+   
+       
+                 $("#myVar").change(function() {
+                     console.log('hola')
+                 });
+             })
+ 
+ 
+             
+           </script>
+    </div> 
+
+   
+
+       
+     
+<script>
+
+    $(document).ready(function() {
+
+        console.log('jquery funciona');
+
+    })
+
+</script>
+           
+
+{% endblock %}

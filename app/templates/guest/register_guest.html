@@ -1,0 +1,252 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card-body border mt-2 my-4 container">
+     <form method ="get">
+          <div class="col-md-auto">
+                    <br>
+                    <label for="title">Fecha de entrada</label>
+                    <input type="date" name="fechaentrada" id="fechaentrada"  class="form-control" onChange="calculo_total()" required>   
+          </div>
+          <div class="col-md-auto">
+                    <br>
+                    <label for="title">Fecha de salida</label>
+                    <input type="date" name="fechasalida" id="fechasalida"  class="form-control" onChange="calculo_total()"  required>
+     
+          </div> 
+          <br>
+          <button class="btn btn-outline-secondary" type="submit" >Buscar</button>
+
+    </form>
+</div>
+<div class="container">
+     <div class="card-body border mt-2 my-4">
+          <form class="form" id="formr_and_h" method="post">
+             
+               {% csrf_token %}
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                         <input type="hidden" value="{{clients.id}}" name="cliente" id="cliente"  >
+                         <input type="hidden" value="{{user.id}}"  name="recepcionista" id="recepcionista" > 
+
+                         <div><label for="title" class="d-flex justify-content-center" >Nombres</label></div>
+                         <input type="text" value="{{clients.name}}" name="name" id="name" class="form-control"  readonly  >             
+
+                    </div>
+                    <div class="col-md-auto">
+                         <div><label for="title" class="d-flex justify-content-center">Apellidos</label></div>
+                         <input type="text" value="{{clients.last_name}}" name="last_name" id="last_name" class="form-control"  readonly  >     
+                    </div>
+                    <div class="col-md-auto">
+                         <div><label for="title" class="d-flex justify-content-center">Numero de Documento</label></div>
+                         <input type="text"  value="{{clients.document_number}}" name="document_number" id="document_number" class="form-control"  readonly >
+                         
+                    </div>
+                    <div class="col-md-auto">
+                         
+                         <div><label for="title" class="d-flex justify-content-center" >Empresa</label></div>
+                         <input type="text" value="{{clients.company}}" name="last_name" id="last_name" class="form-control"  readonly > 
+                    </div>
+               </div>
+               <hr>
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                        <br> 
+                         <label for="title">Tipo de Ingreso</label>
+                         <select type="" name="tipoingreso" id="" class="form-select">                                                           
+                              <option value="Reservacion">Reservacion</option>                         
+                              <option value="Hospedaje">Hospedaje</option>                        
+                         </select>                       
+                         
+                    </div>
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title">Tipo de Reservacion</label>
+                         <select type="" name="tiporeservacion" id="tiporeservacion" class="form-select">                                                           
+                              <option value="No cancelada">No Cancelada</option> 
+                              <option value="Cancelada">Cancelada</option>                         
+                                                                   
+                         </select>
+                    </div>
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title">Fecha de entrada</label>
+                              <input type="date" value="{{fechaentrada}}" name="fechaentrada" id="fechaentrada" onChange="calculo_total()" class="form-control"  readonly  >   
+                    </div>
+                    <div class="col-md-auto">
+                         <br>
+                         <label for="title">Fecha de salida</label>
+                              <input type="date" value="{{fechasalida}}"  name="fechasalida" id="fechasalida" onChange="calculo_total()" class="form-control" readonly  >
+                    </div> 
+                  
+                    <div class="col-md-auto ">
+                         <br>
+                         <label for="title" class="d-flex justify-content-center">Habitacion:</label>
+                              <select name="habitacion" id="habitacion" class="form-select" onChange="(calculo_habitacion(this))">
+                                   <option value="0">--Seleccione una Habitacion--</option>  
+                                   {% for rooms in room %}
+                                        {% if rooms.condition == 'Reservada' or rooms.condition == 'Ocupada' %}
+                                             {% for entrys in entry %}
+                                                  {% if  fechasalida < entrys.entry_at|date:'Y-m-d'  and rooms.id == entrys.room_id %}
+                                                       {% if  rooms.condition == 'Reservada' %}
+                                                            <option class="h5" value="{{rooms.id}},{{rooms.room_price}}">{{rooms.room_number}} {{rooms.room_type}} Reservada para el {{ entrys.entry_at|date:'Y-m-d'}}</option>
+                                                       {% else %}
+                                                            <option class="h5" value="{{rooms.id}},{{rooms.room_price}}">{{rooms.room_number}} {{rooms.room_type}} Ocupada para el {{ entrys.entry_at|date:'Y-m-d'}}</option>
+                                                       {% endif %}
+                                                  {% elif  fechaentrada > entrys.exit_at|date:'Y-m-d'  and rooms.id == entrys.room_id %}
+                                                       <option value="{{rooms.id}},{{rooms.room_price}}">{{rooms.room_number}} {{rooms.room_type}}</option>
+                                                  {% endif %}
+                                             {% endfor %}
+                                        {% else %}
+                                             <option value="{{rooms.id}},{{rooms.room_price}}">{{rooms.room_number}} {{rooms.room_type}}</option>
+                                        {% endif %}                                     
+                                             
+                                        
+                                   {% endfor%}
+                              </select>  
+                             
+                    </div>
+                    {{habitacion.value}}                    
+               </div>
+               <hr>
+               <div class="row justify-content-md-center">
+                    <div class="col-md-auto my-2">
+                         
+                         <div class="form-check my-3 d-flex justify-content-center">
+                                   <input class="form-check-input" type="checkbox"  id="check" value="1"  name="extra_adicional" onChange="comprobar(this);">
+                                   <label class="form-check-label" for="flexCheckDefault">
+                                        -Pack Adicional
+                                   </label>                        
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                   <label for="title" id="cantidad" style="display:none">Cantidad</label>                   
+                              </div>
+                              <input type="text" name="cantidad_adicional" id="cantidad_adicional" class="form-control" style="display:none" onChange="calculo_cant_adicional(this)">  
+                              <input type="hidden" id="precio_cantidad_adicional" value="{{extra_adic}}">     
+                         </div>
+
+
+                    <div class="col-md-auto my-2">
+
+                         <div class="form-check my-3 d-flex justify-content-center ">
+                              <input class="form-check-input" type="checkbox"  id="check" value="2"  name="extra_in" onChange="comprobarin(this);">
+                              <label class="form-check-label" for="flexCheckDefault">
+                                   -Early Check in
+                              </label>                        
+                         </div>                       
+                          <div class="d-flex justify-content-center">
+                              <label for="title" id="cantidadin" style="display:none">Cantidad</label>                   
+                          </div>
+                          <input type="text" name="cantidad_in" id="cantidad_in" class="form-control" style="display:none" onChange="calculo_cant_extrain()">
+                          <input type="hidden" id="extra_check_in" value="{{extra_check_in}}">
+                    </div>                    
+                    
+                    <div class="col-md-auto my-2">
+                         <div class="form-check my-3 d-flex justify-content-center">
+                              <input class="form-check-input" type="checkbox"  id="check" value="3"  name="extra_out" onChange="comprobarout(this);">
+                              <label class="form-check-label" for="flexCheckDefault">
+                                      -Early Check out
+                              </label>                        
+                         </div> 
+                         <div class="d-flex justify-content-center">
+                              <label for="title" id="cantidadout" style="display:none">Cantidad</label>                   
+                         </div>
+                         <input type="text" name="cantidad_out" id="cantidad_out" class="form-control" style="display:none" onChange="calculo_cant_extraout()"> 
+                         <input type="hidden" id="extra_check_out" value="{{extra_check_out}}">                      
+                                          
+
+                    </div>
+
+               </div>
+               <hr>
+               
+               <div class="col-md-auto">
+                    <br>
+                    <label for="title">Observacion</label>
+                         <textarea name="observacion" id="observacion" cols="10" rows="5" class="form-control"></textarea>
+                         
+               </div>
+               <div class="grid">
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Tipo de pago</label>
+                              <select type="" name="tipopago" id="" class="form-select" required>
+                                   <option selected disabled = "true">--Seleccione el tipo de pago--</option>                         
+                                   <option value="Efectivo">Efectivo</option>                         
+                                   <option value="Transferencia">Transferencia</option>                         
+                                   <option value="Debito">Debito</option>                         
+                                   <option value="credito">Tarjeta de Credito</option>                         
+                                   <option value="Zelle">Zelle</option>                         
+                                   <option value="Binance">Binace</option>                         
+                              </select>
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Dinero Recibido</label>
+                                   <input type="text" name="dinerorecibido" id="dinerorecibido" class="form-control" onChange="deuda_cliente()" required> 
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Detalles del Pago</label>
+                              <input type="text" name="detallepago" id="detallepago" class="form-control" required> 
+                         </div>
+                        
+                    <div class="grid">
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Deuda cliente</label>
+                              <input type="text" name="deudacliente" id="deudacliente" class="form-control" required>  
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Saldo a Favor</label>
+                              <input type="text" name="deudahotel" id="deudahotel" class="form-control" required> 
+                         </div>
+                         <div class="col-6 col-md-4">
+                              <br>
+                              <label for="title">Total a Pagar</label>
+                              <input type="text" name="total" id="total" class="form-control" required>  
+                         </div>
+
+                    </div>
+                    <hr>
+                    <div class="row justify-content-md-center">
+                         <div class="col-md-auto">
+                              <br>
+                              
+                         </div>
+                         <div class="col-md-auto">
+                              <br>
+                              <button  type="submit" Registrar cliente" class="btn btn-secondary container my-3">Registrar</button>
+                         </div>
+                         <div class="col-md-auto">
+                              <br>
+                              
+                         </div>
+
+                    </div>
+               
+               </div>
+         
+               
+          </form>
+          
+        
+     </div>
+      <!-- Cargar Archivos de javascript estaticos-->
+      <script src="{% static 'js/utils/ocultarcantidad.js' %}"></script> 
+      <script src="{% static 'js/utils/calcular.js' %}" ></script>                
+      <script src="{% static 'js/utils/select.js' %}" ></script>       
+      <script src="{% static 'js/utils/validarb.js' %}" ></script>   
+
+      <script>
+          function reload2(){
+               location.reload()
+          }
+          
+      </script>
+
+</div>
+
+{% endblock %}

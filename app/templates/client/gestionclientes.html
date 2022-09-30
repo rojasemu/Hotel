@@ -1,0 +1,125 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}    
+        
+    <div class=" ms-5 me-5">
+
+        <div class="row pt-2 pb-5">
+            <div class="col-md-4 pt-2 pb-5 ">
+                    <h2 class="container text-center form-control  btn-dark p-2" placeholder="Disabled input" aria-label="Disabled input example" disabled >Formulario Cliente</h2>
+                                
+                    <div class="card-body border mt-2 my-4">
+                        <form  action="/Registro-clientes/"  class="form " id="formcliente" method="post">
+    
+                            {% csrf_token %}
+                       
+                            <label for="title">Nombres</label>
+                            <input type="text" name="name" id="name"  class="form-control"  minlength="4" maxlength="60" autofocus required>
+                       
+                            <label for="title">Apellidos</label>
+                            <input type="text" name="last_name" id="last_name" class="form-control" minlength="4" maxlength="60"  required ></br>
+        
+                       
+                            <label for="title">Tipo de Documento</label>
+                            <select type="" name="document_type" id="document_type" class="form-select" required>
+                                                          
+                                 <option value="Cedula">Cédula</option>                         
+                                 <option value="Pasaporte">Pasaporte</option>                         
+                                                       
+                            </select>
+                            </br>
+                       
+                            <label for="title">Numero de Documento</label>
+                            <input type="text" name="document_number" id="document_number" class="form-control" minlength="6" maxlength="10" required> 
+                       
+                            <label for="title">Empresa</label>
+                            <input type="text" name="company" id="company" class="form-control"  >  
+                       
+                            <label for="title">Telefono</label>
+                            <input type="text" name="phone" id="phone" class="form-control" minlength="11" maxlength="20" required >
+                       
+                            <label for="title">Vehículo</label>
+                            <input type="text" name="car" id="car"  class="form-control">
+                       
+                            <label for="title">Placa</label>
+                            <input type="text" name="license_plate" id="license_plate" class="form-control">
+                           
+                            <button  type="submit" Registrar cliente" class="btn btn-dark container my-3">Registrar</button>
+                       
+                        </form>
+                    </div>
+                      
+                                  
+            </div>
+            
+            
+            <div class="col-md-8    ">
+                
+                <nav class=" navbar navbar-light my-1  ">
+                    <div class="">
+                    <form method ="get" class="d-flex">
+                        <input class="form-control me-2" name="buscar" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                    </form>
+                    </div>
+                </nav>
+        
+                <main class="container my-1">
+               
+                    <table class="table table-striped border border-3">
+                            <thead class="table-dark text-center">
+                                <h2 class="container form-control btn-dark text-center p-2"  >Clientes</h2>
+                                <tr class="">
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Cédula</th>                                  
+                                    <th>Ingreso</th>
+                                    <th>Editar</th>                
+                                    <th>Eliminar</th>                
+                                </tr> 
+                            </thead>
+                            <tbody>
+                                    {% for clients in client %} 
+                                        <tr>
+                                    
+                                            <td class="table-secondary text-center">{{ clients.name}} </td>
+                                            <td class="table-secondary text-center">{{ clients.last_name}}  </td>
+                                            <td class="table-dark text-center">{{ clients.document_number}}</td>
+                                            <td class="table-dark text-center"> 
+                                                <a href="{% url 'registrar_hospedaje' clients.id %}"  title="Ingreso" class="btn" style="background-color: #F3E9C8;"> 
+                                                    <i class='fas fa-calendar-alt'></i>
+                                                </a></td>                                               
+                                                <td class="table-dark text-center"> 
+                                                    <a href="{% url 'editarc' clients.id %}" title="Editar" class="btn"  style="background-color: #F3E9C8;"> 
+                                                    <i class="fas fa-user-edit"></i>                                                     
+                                                    </a></td>                                     
+                                                <td class="table-dark text-center"> 
+                                                    <a href="#" onclick="eliminarCliente({{clients.id}})" title="ELiminar cliente" class="btn btn-secondary "  >
+                                                    <i class="fas fa-trash-alt"></i>                                                           
+                                                    </a>
+                                                </td>
+                                            
+            
+                                        
+                                        </tr>
+                                    {% endfor %}   
+                            </tbody>    
+                    </table>
+                    <script src="{% static 'js/utils/notificacion.js' %}" ></script>
+                    <div> {%  include 'client/paginator.html' %} </div>   
+                </main>
+            
+            </div>
+        
+        </div>
+      
+		<!-- Cargar Archivos de javascript estaticos-->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>       
+        <script src="{% static 'js/utils/notificacionSwal.js' %}" ></script>        
+        <script src="{% static 'js/utils/validar.js' %}" ></script>    
+        
+        
+
+    </div>
+    
+{% endblock %}

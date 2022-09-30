@@ -1,0 +1,37 @@
+{% block content %}
+     <!DOCTYPE html>
+     {% load static %}
+     <html lang="es" dir="ltr">
+          <head>
+          <meta charset="utf-8">
+          <title>Formulario Login</title>
+          <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+          </head>
+          <body>
+               <div>
+                    <img src="/static/img/hotel-barra.jpg" class="img-fluid"  alt="">
+                  </div>
+          
+               <form class="form-login" method="post" action="">
+                    {% csrf_token %}        
+                    <h5>Login</h5>
+                    <input class="controls" type="text" for="username" name="username" value="" placeholder="Usuario">
+                    <input class="controls" type="password" for="password" name="password" value="" placeholder="Contraseña">
+                    <input class="" type="submit" id="submit" value="Ingresar">
+                    <!-- <p><a href="#">¿Olvidastes tu Contraseña?</a></p>   -->
+                    {% if messages %}
+
+                         {% for message in messages %}
+                              <div class="text-bg-warning p-3 text-center ">
+                                   {{ message }}
+                              </div>
+
+                         {% endfor %}
+
+                     {% endif %}
+               </form>
+
+              
+          </body>
+     </html>
+{% endblock %}
